@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Química — Base de Estudio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --accent4: #d2a8ff;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #c9d1d9;
+    --yellow: #e3b341;
+    --correct: #238636;
+    --wrong: #da3633;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* --- HEADER --- */
+  .header {
+    background: linear-gradient(135deg, #0d1117 0%, #1a2332 50%, #0d1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .atom-icon {
+    width: 40px; height: 40px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    animation: spin 8s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .header-title { font-family: 'Space Mono', monospace; font-size: 18px; color: var(--accent); font-weight: 700; }
+  .header-sub { font-size: 12px; color: var(--text2); }
+  .score-badge {
+    margin-left: auto;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--accent2);
+  }
+
+  /* --- NAV TABS --- */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 16px 32px 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    background: var(--surface);
+  }
+  .tab {
+    padding: 10px 20px;
+    border-radius: 8px 8px 0 0;
+    border: 1px solid transparent;
+    border-bottom: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    background: transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    position: relative;
+    bottom: -1px;
+  }
+  .tab:hover { color: var(--text); background: var(--surface2); }
+  .tab.active {
+    color: var(--accent);
+    background: var(--bg);
+    border-color: var(--border);
+    border-bottom-color: var(--bg);
+  }
+  .tab-emoji { margin-right: 6px; }
+
+  /* --- MAIN CONTENT --- */
+  .main { padding: 32px; max-width: 1000px; margin: 0 auto; }
+  .section { display: none; }
+  .section.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* --- SECTION HEADER --- */
+  .section-header {
+    margin-bottom: 24px;
+  }
+  .section-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .section-title span { color: var(--accent); }
+  .section-desc { font-size: 14px; color: var(--text2); }
+
+  /* --- CONCEPT CARDS --- */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .card-label {
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-bottom: 8px;
+  }
+  .card-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .card-body { font-size: 13px; color: var(--text3); line-height: 1.7; }
+  .card-formula {
+    margin-top: 12px;
+    background: var(--surface2);
+    border-left: 3px solid var(--accent);
+    padding: 8px 12px;
+    border-radius: 0 6px 6px 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--yellow);
+  }
+  .card.green { border-color: #238636; }
+  .card.green .card-title { color: var(--accent2); }
+  .card.green .card-formula { border-left-color: var(--accent2); }
+  .card.purple { border-color: #6e40c9; }
+  .card.purple .card-title { color: var(--accent4); }
+  .card.purple .card-formula { border-left-color: var(--accent4); }
+  .card.red { border-color: #6e2020; }
+  .card.red .card-title { color: var(--accent3); }
+
+  /* --- TABLE SECTION --- */
+  .study-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 24px;
+    background: var(--surface);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .study-table th {
+    background: var(--surface2);
+    padding: 12px 16px;
+    text-align: left;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+  }
+  .study-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text3);
+    vertical-align: top;
+  }
+  .study-table tr:last-child td { border-bottom: none; }
+  .study-table tr:hover td { background: rgba(88,166,255,0.04); }
+  .mono { font-family: 'Space Mono', monospace; color: var(--yellow); font-size: 12px; }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+  .tag-s { background: rgba(88,166,255,0.2); color: var(--accent); }
+  .tag-p { background: rgba(63,185,80,0.2); color: var(--accent2); }
+  .tag-d { background: rgba(227,179,65,0.2); color: var(--yellow); }
+  .tag-f { background: rgba(210,168,255,0.2); color: var(--accent4); }
+
+  /* --- FLASHCARDS --- */
+  .flashcard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .flashcard-progress {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--text2);
+    align-self: flex-end;
+  }
+  .flashcard-wrapper {
+    width: 100%;
+    max-width: 560px;
+    height: 280px;
+    perspective: 1000px;
+    cursor: pointer;
+  }
+  .flashcard {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+  }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .flashcard-face {
+    position: absolute;
+    width: 100%; height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 28px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .flashcard-front {
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+  }
+  .flashcard-back {
+    background: linear-gradient(135deg, #1a2332 0%, #162032 100%);
+    border-color: var(--accent);
+    transform: rotateY(180deg);
+  }
+  .flashcard-hint { font-size: 11px; color: var(--text2); margin-bottom: 12px; font-family: 'Space Mono', monospace; letter-spacing: 1px; }
+  .flashcard-question { font-size: 18px; font-weight: 600; color: var(--text); line-height: 1.5; }
+  .flashcard-answer { font-size: 15px; color: var(--accent); line-height: 1.7; font-weight: 500; }
+  .flashcard-answer-detail { font-size: 12px; color: var(--text2); margin-top: 8px; }
+  .flashcard-controls {
+    display: flex; gap: 12px;
+  }
+  .btn {
+    padding: 10px 24px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .btn-ghost { background: var(--surface); color: var(--text2); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary { background: var(--accent); color: #0d1117; border-color: var(--accent); font-weight: 700; }
+  .btn-primary:hover { background: #79baff; }
+  .btn-success { background: var(--correct); color: #fff; border-color: var(--correct); }
+  .btn-danger { background: var(--wrong); color: #fff; border-color: var(--wrong); }
+
+  /* --- QUIZ --- */
+  .quiz-question {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .quiz-q-num { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text2); margin-bottom: 8px; }
+  .quiz-q-text { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--text); line-height: 1.5; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-option {
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text3);
+    transition: all 0.2s;
+    text-align: left;
+  }
+  .quiz-option:hover:not(:disabled) { border-color: var(--accent); color: var(--text); }
+  .quiz-option.correct { background: rgba(35,134,54,0.2); border-color: var(--accent2); color: var(--accent2); }
+  .quiz-option.wrong { background: rgba(218,54,51,0.2); border-color: var(--accent3); color: var(--accent3); }
+  .quiz-option:disabled { cursor: default; }
+  .quiz-feedback {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: rgba(35,134,54,0.15); color: var(--accent2); border: 1px solid var(--correct); }
+  .quiz-feedback.wrong { background: rgba(218,54,51,0.15); color: var(--accent3); border: 1px solid var(--wrong); }
+
+  .quiz-submit-row { display: flex; gap: 12px; align-items: center; margin-top: 24px; }
+  .quiz-result {
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+    display: none;
+  }
+  .quiz-result.show { display: block; animation: fadeIn 0.4s ease; }
+  .result-score { font-family: 'Space Mono', monospace; font-size: 48px; color: var(--accent); font-weight: 700; }
+  .result-text { font-size: 15px; color: var(--text2); margin-top: 8px; }
+
+  /* --- FILL IN THE BLANK --- */
+  .fill-exercise {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .fill-exercise.correct-ex { border-color: var(--accent2); }
+  .fill-exercise.wrong-ex { border-color: var(--accent3); }
+  .fill-num { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text2); margin-bottom: 10px; }
+  .fill-sentence { font-size: 15px; color: var(--text); line-height: 2; }
+  .fill-input {
+    background: var(--surface2);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    padding: 4px 10px;
+    width: 160px;
+    outline: none;
+    transition: all 0.2s;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .fill-input:focus { border-color: var(--yellow); box-shadow: 0 0 0 2px rgba(227,179,65,0.2); }
+  .fill-input.correct-input { border-color: var(--accent2); color: var(--accent2); background: rgba(35,134,54,0.1); }
+  .fill-input.wrong-input { border-color: var(--accent3); color: var(--accent3); background: rgba(218,54,51,0.1); }
+  .fill-hint { font-size: 12px; color: var(--text2); margin-top: 8px; }
+  .fill-answer { font-size: 12px; color: var(--accent2); margin-top: 6px; display: none; }
+  .fill-answer.show { display: block; }
+
+  /* --- PERIODIC TABLE MINI --- */
+  .pt-container { overflow-x: auto; padding-bottom: 8px; }
+  .pt-grid {
+    display: grid;
+    grid-template-columns: repeat(18, 48px);
+    gap: 3px;
+    min-width: 900px;
+  }
+  .pt-cell {
+    width: 48px; height: 48px;
+    border-radius: 6px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    border: 1px solid transparent;
+    font-size: 11px;
+    position: relative;
+  }
+  .pt-cell:hover { transform: scale(1.15); z-index: 10; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+  .pt-cell .pt-symbol { font-weight: 700; font-size: 14px; }
+  .pt-cell .pt-num { font-size: 9px; opacity: 0.7; }
+  .pt-s { background: rgba(88,166,255,0.2); border-color: rgba(88,166,255,0.4); color: var(--accent); }
+  .pt-p { background: rgba(63,185,80,0.2); border-color: rgba(63,185,80,0.4); color: var(--accent2); }
+  .pt-d { background: rgba(227,179,65,0.2); border-color: rgba(227,179,65,0.4); color: var(--yellow); }
+  .pt-f { background: rgba(210,168,255,0.2); border-color: rgba(210,168,255,0.4); color: var(--accent4); }
+  .pt-noble { background: rgba(248,113,113,0.2); border-color: rgba(248,113,113,0.4); color: #f87171; }
+  .pt-empty { background: transparent; border: none; cursor: default; }
+  .pt-empty:hover { transform: none; }
+
+  .element-popup {
+    display: none;
+    position: fixed;
+    background: var(--surface2);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 16px 20px;
+    min-width: 220px;
+    z-index: 200;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    pointer-events: none;
+  }
+  .element-popup.show { display: block; }
+  .popup-symbol { font-family: 'Space Mono', monospace; font-size: 32px; font-weight: 700; color: var(--accent); }
+  .popup-name { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+  .popup-row { font-size: 12px; color: var(--text2); margin-bottom: 3px; }
+  .popup-row span { color: var(--text3); }
+
+  /* --- PROGRESS BAR --- */
+  .progress-section { margin-bottom: 28px; }
+  .progress-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .progress-label { font-size: 13px; color: var(--text2); }
+  .progress-val { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--accent); }
+  .progress-bar { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent4)); border-radius: 3px; transition: width 0.5s ease; }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 640px) {
+    .main { padding: 20px 16px; }
+    .header { padding: 14px 16px; }
+    .tabs { padding: 12px 16px 0; }
+    .tab { padding: 8px 14px; font-size: 12px; }
+    .cards-grid { grid-template-columns: 1fr; }
+  }
+
+  .note-box {
+    background: rgba(88,166,255,0.08);
+    border: 1px solid rgba(88,166,255,0.3);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--text3);
+    line-height: 1.7;
+  }
+  .note-box strong { color: var(--accent); }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="atom-icon">⚛</div>
+  <div>
+    <div class="header-title">Química — Base de Estudio</div>
+    <div class="header-sub">Configuración Electrónica · Tabla Periódica · págs. 73–105</div>
+  </div>
+  <div class="score-badge" id="globalScore">⭐ 0 pts</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showSection('conceptos')"><span class="tab-emoji">📚</span>Conceptos</button>
+  <button class="tab" onclick="showSection('tabla')"><span class="tab-emoji">🧪</span>Configuraciones</button>
+  <button class="tab" onclick="showSection('flashcards')"><span class="tab-emoji">🃏</span>Flashcards</button>
+  <button class="tab" onclick="showSection('quiz')"><span class="tab-emoji">🎯</span>Quiz</button>
+  <button class="tab" onclick="showSection('completar')"><span class="tab-emoji">✏️</span>Completa</button>
+  <button class="tab" onclick="showSection('periodica')"><span class="tab-emoji">🔬</span>Tabla Periódica</button>
+</div>
+
+<div class="main">
+
+  <!-- ===================== CONCEPTOS ===================== -->
+  <div id="sec-conceptos" class="section active">
+    <div class="section-header">
+      <div class="section-title">📚 <span>Conceptos Clave</span></div>
+      <div class="section-desc">Repasa los principios fundamentales antes de practicar.</div>
+    </div>
+
+    <div class="note-box"><strong>Orbital atómico:</strong> Región del espacio donde es alta la probabilidad de encontrar un electrón.</div>
+
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-label">Principio 1</div>
+        <div class="card-title">Número Atómico (Z)</div>
+        <div class="card-body">En un átomo eléctricamente neutro, el número atómico (Z) indica cuántos electrones hay que distribuir entre los orbitales.</div>
+        <div class="card-formula">Protones = Electrones (átomo neutro)</div>
+      </div>
+      <div class="card green">
+        <div class="card-label">Principio 2</div>
+        <div class="card-title">Regla de Aufbau</div>
+        <div class="card-body">Los electrones se acomodan en orden creciente de energía. Se llenan primero los orbitales de menor energía.</div>
+        <div class="card-formula">1s² 2s² 2p⁶ 3s² 3p⁶ 4s² 3d¹⁰...</div>
+      </div>
+      <div class="card purple">
+        <div class="card-label">Principio 3</div>
+        <div class="card-title">Exclusión de Pauli</div>
+        <div class="card-body">No puede haber dos electrones con los mismos valores de números cuánticos. Máximo 2 electrones por orbital, con espín opuesto.</div>
+        <div class="card-formula">↑↓ (espín +½ y −½)</div>
+      </div>
+      <div class="card red">
+        <div class="card-label">Principio 4</div>
+        <div class="card-title">Regla de Hund</div>
+        <div class="card-body">Cuando hay varios orbitales del mismo tipo disponibles, se coloca un electrón en cada orbital antes de emparejar.</div>
+        <div class="card-formula">N: ↑_ ↑_ ↑_ (2px 2py 2pz)</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="section-title" style="font-size:16px; margin-bottom:16px;">🔢 Notación Subnivel</div>
+
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-title" style="color:var(--yellow)">Condensada</div>
+        <div class="card-body">Escribe todos los subniveles juntos.</div>
+        <div class="card-formula">S (Z=16): 1s² 2s² 2p⁶ 3s² 3p⁴</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--yellow)">Notación Kernel</div>
+        <div class="card-body">Se usa el símbolo del gas noble anterior para abreviar la configuración interna.</div>
+        <div class="card-formula">S: [Ne] 3s² 3p⁴</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--yellow)">Paramagnetismo</div>
+        <div class="card-body">Electrones desapareados → atracción débil por campos magnéticos.</div>
+        <div class="card-formula">C (Z=6): tiene 2 e⁻ desapareados</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--yellow)">Diamagnetismo</div>
+        <div class="card-body">Todos los electrones apareados → repulsión por campos magnéticos.</div>
+        <div class="card-formula">He, Be, Ne: todos apareados</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="section-title" style="font-size:16px; margin-bottom:16px;">📊 Bloques de la Tabla Periódica</div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-title"><span class="tag tag-s">s</span> Bloque s</div>
+        <div class="card-body">Grupos 1 y 2 (IA, IIA). Máximo 2 electrones en subnivel s. Metales alcalinos y alcalinotérreos.</div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="tag tag-p">p</span> Bloque p</div>
+        <div class="card-body">Grupos 13–18 (IIIA→0). Máximo 6 electrones. Incluye no metales, halógenos y gases nobles.</div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="tag tag-d">d</span> Bloque d</div>
+        <div class="card-body">Grupos 3–12 (IIIB→IIB). Máximo 10 electrones. Metales de transición.</div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="tag tag-f">f</span> Bloque f</div>
+        <div class="card-body">Lantánidos y Actínidos. Máximo 14 electrones. Transición interna (tierras raras).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CONFIGURACIONES ===================== -->
+  <div id="sec-tabla" class="section">
+    <div class="section-header">
+      <div class="section-title">🧪 <span>Configuraciones Electrónicas</span></div>
+      <div class="section-desc">Periodos 1, 2 y 3 — con electrones de valencia y tipo.</div>
+    </div>
+
+    <div class="note-box"><strong>Electrones de valencia:</strong> Los electrones ubicados en la última capa. Son los que participan en los enlaces químicos.</div>
+
+    <table class="study-table">
+      <thead>
+        <tr>
+          <th>Elemento</th>
+          <th>Z</th>
+          <th>Configuración</th>
+          <th>Kernel</th>
+          <th>e⁻ Valencia</th>
+          <th>Tipo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>₁H — Hidrógeno</td><td>1</td><td class="mono">1s¹</td><td class="mono">—</td><td>1</td><td><span class="tag tag-s">s</span></td></tr>
+        <tr><td>₂He — Helio</td><td>2</td><td class="mono">1s²</td><td class="mono">—</td><td>2</td><td><span class="tag tag-s">s</span> Gas Noble</td></tr>
+        <tr><td>₃Li — Litio</td><td>3</td><td class="mono">1s² 2s¹</td><td class="mono">[He] 2s¹</td><td>1</td><td><span class="tag tag-s">s</span></td></tr>
+        <tr><td>₄Be — Berilio</td><td>4</td><td class="mono">1s² 2s²</td><td class="mono">[He] 2s²</td><td>2</td><td><span class="tag tag-s">s</span></td></tr>
+        <tr><td>₅B — Boro</td><td>5</td><td class="mono">1s² 2s² 2p¹</td><td class="mono">[He] 2s²2p¹</td><td>3</td><td><span class="tag tag-p">p</span></td></tr>
+        <tr><td>₆C — Carbono</td><td>6</td><td class="mono">1s² 2s² 2p²</td><td class="mono">[He] 2s²2p²</td><td>4</td><td><span class="tag tag-p">p</span></td></tr>
+        <tr><td>₇N — Nitrógeno</td><td>7</td><td class="mono">1s² 2s² 2p³</td><td class="mono">[He] 2s²2p³</td><td>5</td><td><span class="tag tag-p">p</span></td></tr>
+        <tr><td>₈O — Oxígeno</td><td>8</td><td class="mono">1s² 2s² 2p⁴</td><td class="mono">[He] 2s²2p⁴</td><td>6</td><td><span class="tag tag-p">p</span></td></tr>
+        <tr><td>₉F — Flúor</td><td>9</td><td class="mono">1s² 2s² 2p⁵</td><td class="mono">[He] 2s²2p⁵</td><td>7</td><td><span class="tag tag-p">p</span></td></tr>
+        <tr><td>₁₀Ne — Neón</td><td>10</td><td class="mono">1s² 2s² 2p⁶</td><td class="mono">[He] 2s²2p⁶</td><td>8</td><td><span class="tag tag-p">p</span> Gas Noble</td></tr>
+        <tr><td>₁₁Na — Sodio</td><td>11</td><td class="mono">1s² 2s² 2p⁶ 3s¹</td><td class="mono">[Ne] 3s¹</td><td>1</td><td><span class="tag tag-s">s</span></td></tr>
+        <tr><td>₁₂Mg — Magnesio</td><td>12</td><td class="mono">1s² 2s² 2p⁶ 3s²</td><td class="mono">[Ne] 3s²</td><td>2</td><td><span class="tag tag-s">s</span></td></tr>
+        <tr><td>₁₃Al — Aluminio</td><td>13</td><td class="mono">1s² 2s² 2p⁶ 3s² 3p¹</td><td class="mono">[Ne] 3s²3p¹</td><td>3</td><td><span class="tag tag-p">p</span></td></tr>
+        <tr><td>₁₄Si — Silicio</td><td>14</td><td class="mono">1s² 2s² 2p⁶ 3s² 3p²</td><td class="mono">[Ne] 3s²3p²</td><td>4</td><td><span class="tag tag-p">p</span></td></tr>
+        <tr><td>₁₅P — Fósforo</td><td>15</td><td class="mono">1s² 2s² 2p⁶ 3s² 3p³</td><td class="mono">[Ne] 3s²3p³</td><td>5</td><td><span class="tag tag-p">p</span></td></tr>
+        <tr><td>₁₆S — Azufre</td><td>16</td><td class="mono">1s² 2s² 2p⁶ 3s² 3p⁴</td><td class="mono">[Ne] 3s²3p⁴</td><td>6</td><td><span class="tag tag-p">p</span></td></tr>
+        <tr><td>₁₇Cl — Cloro</td><td>17</td><td class="mono">1s² 2s² 2p⁶ 3s² 3p⁵</td><td class="mono">[Ne] 3s²3p⁵</td><td>7</td><td><span class="tag tag-p">p</span></td></tr>
+        <tr><td>₁₈Ar — Argón</td><td>18</td><td class="mono">1s² 2s² 2p⁶ 3s² 3p⁶</td><td class="mono">[Ne] 3s²3p⁶</td><td>8</td><td><span class="tag tag-p">p</span> Gas Noble</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===================== FLASHCARDS ===================== -->
+  <div id="sec-flashcards" class="section">
+    <div class="section-header">
+      <div class="section-title">🃏 <span>Flashcards</span></div>
+      <div class="section-desc">Haz clic en la tarjeta para ver la respuesta.</div>
+    </div>
+    <div class="flashcard-container">
+      <div class="flashcard-progress" id="fc-progress">Tarjeta 1 de 16</div>
+      <div class="flashcard-wrapper" onclick="flipCard()">
+        <div class="flashcard" id="flashcard">
+          <div class="flashcard-face flashcard-front">
+            <div class="flashcard-hint">PREGUNTA — clic para voltear</div>
+            <div class="flashcard-question" id="fc-question">¿Qué es el principio de Aufbau?</div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <div class="flashcard-hint">RESPUESTA</div>
+            <div class="flashcard-answer" id="fc-answer">Los electrones se acomodan en orden creciente de energía, llenando primero los orbitales de menor energía.</div>
+            <div class="flashcard-answer-detail" id="fc-detail">Del alemán "aufbauen" = construir</div>
+          </div>
+        </div>
+      </div>
+      <div class="flashcard-controls">
+        <button class="btn btn-danger" onclick="markCard(false)">✗ No lo sé</button>
+        <button class="btn btn-ghost" onclick="nextCard()">Siguiente →</button>
+        <button class="btn btn-success" onclick="markCard(true)">✓ Lo sé</button>
+      </div>
+      <div style="font-size:13px; color:var(--text2);">
+        ✓ Correctas: <span id="fc-correct" style="color:var(--accent2)">0</span> &nbsp;|&nbsp;
+        ✗ Revisar: <span id="fc-wrong" style="color:var(--accent3)">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== QUIZ ===================== -->
+  <div id="sec-quiz" class="section">
+    <div class="section-header">
+      <div class="section-title">🎯 <span>Quiz de Opción Múltiple</span></div>
+      <div class="section-desc">Responde todas las preguntas y revisa tu puntaje.</div>
+    </div>
+    <div id="quiz-container"></div>
+    <div id="quiz-result" class="quiz-result">
+      <div class="result-score" id="result-score">0/10</div>
+      <div class="result-text" id="result-text">Revisa los conceptos e intenta de nuevo.</div>
+      <button class="btn btn-primary" style="margin-top:20px" onclick="resetQuiz()">↺ Reintentar</button>
+    </div>
+    <div class="quiz-submit-row" id="quiz-submit-row">
+      <button class="btn btn-primary" onclick="submitQuiz()">Calificar Quiz</button>
+      <span id="quiz-answered" style="font-size:13px;color:var(--text2)">0 de 10 respondidas</span>
+    </div>
+  </div>
+
+  <!-- ===================== COMPLETAR ===================== -->
+  <div id="sec-completar" class="section">
+    <div class="section-header">
+      <div class="section-title">✏️ <span>Completa los Espacios</span></div>
+      <div class="section-desc">Escribe la palabra o fórmula que falta en cada oración.</div>
+    </div>
+    <div id="fill-container"></div>
+    <div style="display:flex; gap:12px; margin-top:8px;">
+      <button class="btn btn-primary" onclick="checkFill()">Verificar respuestas</button>
+      <button class="btn btn-ghost" onclick="resetFill()">Reiniciar</button>
+    </div>
+    <div id="fill-score" style="margin-top:16px; font-family:'Space Mono',monospace; font-size:15px; color:var(--accent); display:none;"></div>
+  </div>
+
+  <!-- ===================== TABLA PERIÓDICA ===================== -->
+  <div id="sec-periodica" class="section">
+    <div class="section-header">
+      <div class="section-title">🔬 <span>Tabla Periódica Interactiva</span></div>
+      <div class="section-desc">Pasa el cursor sobre cada elemento para ver su información.</div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(88,166,255,0.4)"></div> Bloque s</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(63,185,80,0.4)"></div> Bloque p</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(227,179,65,0.4)"></div> Bloque d (Transición)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(210,168,255,0.4)"></div> Bloque f (Tierras raras)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(248,113,113,0.4)"></div> Gases Nobles</div>
+    </div>
+    <div class="pt-container">
+      <div class="pt-grid" id="pt-grid"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Element Popup -->
+<div class="element-popup" id="element-popup">
+  <div class="popup-symbol" id="pop-symbol">H</div>
+  <div class="popup-name" id="pop-name">Hidrógeno</div>
+  <div class="popup-row">Z: <span id="pop-z">1</span></div>
+  <div class="popup-row">Masa: <span id="pop-mass">1.008</span> uma</div>
+  <div class="popup-row">Config: <span id="pop-config">1s¹</span></div>
+  <div class="popup-row">Periodo: <span id="pop-period">1</span> | Grupo: <span id="pop-group">1</span></div>
+  <div class="popup-row">Bloque: <span id="pop-block">s</span> | Familia: <span id="pop-family">No metal</span></div>
+</div>
+
+<script>
+// ==================== GLOBAL STATE ====================
+let totalScore = 0;
+function addScore(pts) {
+  totalScore += pts;
+  document.getElementById('globalScore').textContent = '⭐ ' + totalScore + ' pts';
+}
+
+// ==================== TABS ====================
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  event.target.closest('.tab').classList.add('active');
+}
+
+// ==================== FLASHCARDS ====================
+const flashcards = [
+  { q: "¿Qué es el principio de Aufbau?", a: "Los electrones se acomodan en orden creciente de energía, llenando primero los orbitales de menor energía.", d: "Del alemán 'aufbauen' = construir" },
+  { q: "¿Qué establece el principio de exclusión de Pauli?", a: "No puede haber dos o más electrones con los mismos valores de números cuánticos. Máximo 2 e⁻ por orbital, con espín opuesto.", d: "Espines: +½ y −½" },
+  { q: "¿Qué dice la regla de Hund?", a: "Cuando hay varios orbitales del mismo tipo disponibles, se coloca un electrón en cada orbital antes de emparejar ninguno.", d: "Principio de máxima multiplicidad" },
+  { q: "¿Cuál es la configuración electrónica del azufre (Z=16)?", a: "1s² 2s² 2p⁶ 3s² 3p⁴", d: "En notación Kernel: [Ne] 3s² 3p⁴" },
+  { q: "¿Qué son los electrones de valencia?", a: "Los electrones ubicados en la última capa de la configuración electrónica. Participan en la formación de enlaces.", d: "Son los más importantes para la reactividad química" },
+  { q: "¿Qué es el paramagnetismo?", a: "Débil atracción por campos magnéticos que presentan las sustancias con electrones desapareados en su último nivel.", d: "Opuesto al diamagnetismo" },
+  { q: "¿Cuántos grupos hay en la tabla periódica?", a: "18 grupos (también llamados familias). Numerados del 1 al 18 según la IUPAC.", d: "También se nombran IA, IIA... VIIA, 0" },
+  { q: "¿Qué son los gases nobles y por qué son estables?", a: "Elementos del grupo 18 (He, Ne, Ar, Kr, Xe, Rn). Son estables porque tienen su última capa completa (ns²np⁶).", d: "Son diamagnéticos y casi inertes" },
+  { q: "¿Qué elementos forman los metales alcalinos?", a: "Li, Na, K, Rb, Cs, Fr (Grupo 1/IA). Son suaves, brillantes, muy reactivos y tienen valencia 1+.", d: "El H no es metal alcalino aunque está en el grupo 1" },
+  { q: "¿Qué es la notación Kernel?", a: "Forma abreviada de escribir la configuración electrónica usando el símbolo del gas noble anterior entre corchetes.", d: "Ejemplo: Na = [Ne] 3s¹" },
+  { q: "¿En qué bloque está el hierro (Fe, Z=26)?", a: "Bloque d. Su configuración es [Ar] 3d⁶ 4s². Es un metal de transición del grupo 8 (VIIIB).", d: "Periodo 4, bloque d" },
+  { q: "¿Qué son los halógenos?", a: "Elementos del grupo 17 (VIIA): F, Cl, Br, I, At. Son los no metales más reactivos, forman sales y tienen carga iónica 1−.", d: "Halógeno = 'formador de sales'" },
+  { q: "¿Cuántos electrones caben en el subnivel d?", a: "10 electrones. El subnivel d tiene 5 orbitales, y cada orbital puede contener 2 electrones con espín opuesto.", d: "s=2, p=6, d=10, f=14" },
+  { q: "¿Qué es el diamagnetismo?", a: "Repulsión por campos magnéticos que presentan las sustancias cuyos átomos tienen todos sus electrones apareados.", d: "Ne, He, Be son diamagnéticos" },
+  { q: "¿Cuál es el orden de llenado de subniveles?", a: "1s 2s 2p 3s 3p 4s 3d 4p 5s 4d 5p 6s 4f 5d 6p... (regla de las diagonales de Aufbau)", d: "La energía no siempre sigue el orden numérico" },
+  { q: "¿Qué elemento tiene la configuración [Ar] 4s² 3d¹⁰?", a: "Zinc (Zn), Z=30. Metal de transición del grupo 12 (IIB). Tiene el subnivel d completo.", d: "Periodo 4, bloque d" },
+];
+
+let fcIndex = 0, fcCorrect = 0, fcWrong = 0;
+
+function updateFlashcard() {
+  const card = flashcards[fcIndex];
+  document.getElementById('fc-question').textContent = card.q;
+  document.getElementById('fc-answer').textContent = card.a;
+  document.getElementById('fc-detail').textContent = card.d;
+  document.getElementById('fc-progress').textContent = `Tarjeta ${fcIndex + 1} de ${flashcards.length}`;
+  document.getElementById('flashcard').classList.remove('flipped');
+}
+
+function flipCard() {
+  document.getElementById('flashcard').classList.toggle('flipped');
+}
+
+function nextCard() {
+  fcIndex = (fcIndex + 1) % flashcards.length;
+  updateFlashcard();
+}
+
+function markCard(knew) {
+  if (knew) { fcCorrect++; addScore(2); document.getElementById('fc-correct').textContent = fcCorrect; }
+  else { fcWrong++; document.getElementById('fc-wrong').textContent = fcWrong; }
+  nextCard();
+}
+
+// ==================== QUIZ ====================
+const quizData = [
+  { q: "¿Cuántos electrones puede contener el subnivel p?", opts: ["2", "6", "10", "14"], correct: 1, exp: "El subnivel p tiene 3 orbitales × 2 electrones = 6 e⁻ máximo." },
+  { q: "Según la regla de Hund, al llenar orbitales p del mismo subnivel se debe:", opts: ["Llenar uno a la vez antes de emparejar", "Emparejar de izquierda a derecha", "Llenar en orden alfabético x, y, z", "Colocar ambos con el mismo espín"], correct: 0, exp: "Regla de Hund: un electrón por orbital disponible antes de emparejar." },
+  { q: "¿Cuál es la configuración en notación Kernel del sodio (Z=11)?", opts: ["[He] 3s¹", "[Ne] 3s¹", "[Ar] 3s¹", "[Kr] 3s¹"], correct: 1, exp: "Ne tiene Z=10. Na (Z=11) añade un electrón en 3s¹." },
+  { q: "El azufre (S, Z=16) tiene __ electrones de valencia.", opts: ["4", "5", "6", "7"], correct: 2, exp: "S: [Ne] 3s² 3p⁴. Los electrones de valencia son en el nivel 3: 2+4 = 6." },
+  { q: "¿Qué familia son los elementos del grupo 17?", opts: ["Gases nobles", "Metales alcalinos", "Halógenos", "Calcógenos"], correct: 2, exp: "Grupo 17 = Halógenos (F, Cl, Br, I, At). 'Formadores de sales'." },
+  { q: "¿Cuántos periodos tiene la tabla periódica moderna?", opts: ["5", "6", "7", "8"], correct: 2, exp: "La tabla periódica tiene 7 periodos, uno por cada nivel energético principal." },
+  { q: "El elemento con configuración [Ar] 4s² 3d⁶ corresponde a:", opts: ["Manganeso (Mn)", "Hierro (Fe)", "Cobalto (Co)", "Cromo (Cr)"], correct: 1, exp: "Fe (Z=26): [Ar] 4s² 3d⁶. Tiene 6 electrones en 3d." },
+  { q: "¿Qué tipo de magnetismo presenta el carbono (Z=6)?", opts: ["Diamagnético", "Paramagnético", "Ferromagnético", "No magnético"], correct: 1, exp: "C: 1s² 2s² 2p². Tiene 2 electrones desapareados en 2p → paramagnético." },
+  { q: "Los metales de transición se encuentran en los bloques:", opts: ["s y p", "p y f", "d y f", "Solo d"], correct: 2, exp: "Metales de transición: bloque d (grupos 3-12). Los de transición interna (lantánidos/actínidos): bloque f." },
+  { q: "¿Por qué el primer periodo solo tiene 2 elementos (H y He)?", opts: ["Por decisión histórica", "El nivel 1 solo tiene el subnivel 1s con capacidad para 2 e⁻", "Los demás elementos no se descubrieron", "El nivel 1 tiene subniveles s y p"], correct: 1, exp: "El nivel n=1 solo contiene el subnivel 1s, que puede alojar máximo 2 electrones." },
+];
+
+let quizAnswers = new Array(quizData.length).fill(null);
+let quizSubmitted = false;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizData.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question';
+    div.innerHTML = `
+      <div class="quiz-q-num">PREGUNTA ${i+1} DE ${quizData.length}</div>
+      <div class="quiz-q-text">${q.q}</div>
+      <div class="quiz-options">
+        ${q.opts.map((o,j) => `<button class="quiz-option" onclick="selectAnswer(${i},${j},this)" id="opt-${i}-${j}">${o}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="fb-${i}"></div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function selectAnswer(qi, oi, btn) {
+  if (quizSubmitted) return;
+  quizAnswers[qi] = oi;
+  document.querySelectorAll(`[id^="opt-${qi}-"]`).forEach(b => b.classList.remove('correct','wrong'));
+  // just highlight selection
+  btn.style.borderColor = 'var(--accent)';
+  btn.style.color = 'var(--accent)';
+  document.querySelectorAll(`[id^="opt-${qi}-"]`).forEach(b => {
+    if (b !== btn) { b.style.borderColor = ''; b.style.color = ''; }
+  });
+  const answered = quizAnswers.filter(a => a !== null).length;
+  document.getElementById('quiz-answered').textContent = `${answered} de ${quizData.length} respondidas`;
+}
+
+function submitQuiz() {
+  if (quizSubmitted) return;
+  quizSubmitted = true;
+  let score = 0;
+  quizData.forEach((q, i) => {
+    const sel = quizAnswers[i];
+    const fb = document.getElementById(`fb-${i}`);
+    document.querySelectorAll(`[id^="opt-${i}-"]`).forEach(b => {
+      b.disabled = true; b.style.borderColor = ''; b.style.color = '';
+    });
+    const correctBtn = document.getElementById(`opt-${i}-${q.correct}`);
+    correctBtn.classList.add('correct');
+    if (sel !== null && sel !== q.correct) {
+      document.getElementById(`opt-${i}-${sel}`).classList.add('wrong');
+    }
+    fb.classList.add('show');
+    if (sel === q.correct) {
+      score++;
+      fb.classList.add('correct');
+      fb.innerHTML = `✓ ¡Correcto! ${q.exp}`;
+    } else {
+      fb.classList.add('wrong');
+      fb.innerHTML = `✗ ${sel === null ? 'Sin respuesta.' : 'Incorrecto.'} ${q.exp}`;
+    }
+  });
+  document.getElementById('quiz-submit-row').style.display = 'none';
+  const result = document.getElementById('quiz-result');
+  result.classList.add('show');
+  document.getElementById('result-score').textContent = `${score}/${quizData.length}`;
+  const pct = score / quizData.length;
+  document.getElementById('result-text').textContent = pct >= 0.8 ? '🏆 ¡Excelente! Dominas el tema.' : pct >= 0.6 ? '👍 Bien, sigue repasando.' : '📚 Revisa los conceptos e intenta de nuevo.';
+  addScore(score * 5);
+}
+
+function resetQuiz() {
+  quizAnswers = new Array(quizData.length).fill(null);
+  quizSubmitted = false;
+  document.getElementById('quiz-result').classList.remove('show');
+  document.getElementById('quiz-submit-row').style.display = 'flex';
+  document.getElementById('quiz-answered').textContent = `0 de ${quizData.length} respondidas`;
+  buildQuiz();
+}
+
+// ==================== FILL IN THE BLANK ====================
+const fillData = [
+  { before: "El principio que dice que los electrones llenan primero los orbitales de menor energía se llama principio de ", blank: "Aufbau", after: ".", hint: "Del alemán 'construir'" },
+  { before: "Un orbital atómico puede contener máximo ", blank: "2", after: " electrones, según el principio de exclusión de Pauli.", hint: "Con espín opuesto (+½ y −½)" },
+  { before: "La configuración electrónica del cloro (Z=17) en notación Kernel es: [Ne] 3s² ", blank: "3p⁵", after: ".", hint: "Subnivel 3p con 5 electrones" },
+  { before: "Los elementos del grupo 17 se llaman ", blank: "halógenos", after: " y son los no metales más reactivos.", hint: "Significa 'formadores de sales'" },
+  { before: "Los electrones ubicados en la última capa se llaman electrones de ", blank: "valencia", after: " y son los que participan en los enlaces.", hint: "Son los del nivel más externo" },
+  { before: "El fenómeno de atracción débil por campos magnéticos causado por electrones desapareados se llama ", blank: "paramagnetismo", after: ".", hint: "Para = junto a, magnético" },
+  { before: "La tabla periódica tiene ", blank: "7", after: " periodos, uno por cada nivel energético principal.", hint: "Número de filas horizontales" },
+  { before: "El subnivel d puede contener máximo ", blank: "10", after: " electrones (5 orbitales × 2).", hint: "s=2, p=6, d=?, f=14" },
+  { before: "El elemento azufre (Z=16) tiene ", blank: "6", after: " electrones de valencia.", hint: "Cuenta los electrones del nivel n=3" },
+  { before: "Los lantánidos y actínidos corresponden al bloque ", blank: "f", after: " de la tabla periódica.", hint: "Subnivel que llena 14 electrones" },
+];
+
+function buildFill() {
+  const container = document.getElementById('fill-container');
+  container.innerHTML = '';
+  fillData.forEach((f, i) => {
+    const div = document.createElement('div');
+    div.className = 'fill-exercise';
+    div.id = `fill-ex-${i}`;
+    div.innerHTML = `
+      <div class="fill-num">EJERCICIO ${i+1}</div>
+      <div class="fill-sentence">
+        ${f.before}<input class="fill-input" id="fill-${i}" placeholder="___" autocomplete="off" oninput="updateFillCount()">
+        ${f.after}
+      </div>
+      <div class="fill-hint">💡 Pista: ${f.hint}</div>
+      <div class="fill-answer" id="fill-ans-${i}">✓ Respuesta: <strong>${f.blank}</strong></div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function updateFillCount() {}
+
+function checkFill() {
+  let correct = 0;
+  fillData.forEach((f, i) => {
+    const val = document.getElementById(`fill-${i}`).value.trim().toLowerCase();
+    const correct_val = f.blank.toLowerCase();
+    const input = document.getElementById(`fill-${i}`);
+    const ex = document.getElementById(`fill-ex-${i}`);
+    const ans = document.getElementById(`fill-ans-${i}`);
+    if (val === correct_val || val === correct_val.replace('⁵','5').replace('⁴','4').replace('²','2').replace('³','3').replace('¹','1')) {
+      input.classList.remove('wrong-input'); input.classList.add('correct-input');
+      ex.classList.remove('wrong-ex'); ex.classList.add('correct-ex');
+      ans.classList.remove('show');
+      correct++;
+    } else {
+      input.classList.remove('correct-input'); input.classList.add('wrong-input');
+      ex.classList.remove('correct-ex'); ex.classList.add('wrong-ex');
+      ans.classList.add('show');
+    }
+  });
+  const scoreEl = document.getElementById('fill-score');
+  scoreEl.style.display = 'block';
+  scoreEl.textContent = `Resultado: ${correct}/${fillData.length} correctas`;
+  addScore(correct * 3);
+}
+
+function resetFill() {
+  fillData.forEach((f, i) => {
+    const input = document.getElementById(`fill-${i}`);
+    if (input) {
+      input.value = '';
+      input.classList.remove('correct-input','wrong-input');
+    }
+    const ex = document.getElementById(`fill-ex-${i}`);
+    if (ex) ex.classList.remove('correct-ex','wrong-ex');
+    const ans = document.getElementById(`fill-ans-${i}`);
+    if (ans) ans.classList.remove('show');
+  });
+  document.getElementById('fill-score').style.display = 'none';
+}
+
+// ==================== PERIODIC TABLE ====================
+const elements = [
+  {z:1,sym:"H",name:"Hidrógeno",mass:"1.008",block:"p",period:1,group:1,family:"No metal",config:"1s¹",col:1,row:1},
+  {z:2,sym:"He",name:"Helio",mass:"4.003",block:"noble",period:1,group:18,family:"Gas noble",config:"1s²",col:18,row:1},
+  {z:3,sym:"Li",name:"Litio",mass:"6.941",block:"s",period:2,group:1,family:"Metal alcalino",config:"[He] 2s¹",col:1,row:2},
+  {z:4,sym:"Be",name:"Berilio",mass:"9.012",block:"s",period:2,group:2,family:"Metal alcalinotérreo",config:"[He] 2s²",col:2,row:2},
+  {z:5,sym:"B",name:"Boro",mass:"10.81",block:"p",period:2,group:13,family:"Metaloide",config:"[He] 2s²2p¹",col:13,row:2},
+  {z:6,sym:"C",name:"Carbono",mass:"12.01",block:"p",period:2,group:14,family:"No metal",config:"[He] 2s²2p²",col:14,row:2},
+  {z:7,sym:"N",name:"Nitrógeno",mass:"14.01",block:"p",period:2,group:15,family:"No metal",config:"[He] 2s²2p³",col:15,row:2},
+  {z:8,sym:"O",name:"Oxígeno",mass:"16.00",block:"p",period:2,group:16,family:"No metal",config:"[He] 2s²2p⁴",col:16,row:2},
+  {z:9,sym:"F",name:"Flúor",mass:"19.00",block:"p",period:2,group:17,family:"Halógeno",config:"[He] 2s²2p⁵",col:17,row:2},
+  {z:10,sym:"Ne",name:"Neón",mass:"20.18",block:"noble",period:2,group:18,family:"Gas noble",config:"[He] 2s²2p⁶",col:18,row:2},
+  {z:11,sym:"Na",name:"Sodio",mass:"22.99",block:"s",period:3,group:1,family:"Metal alcalino",config:"[Ne] 3s¹",col:1,row:3},
+  {z:12,sym:"Mg",name:"Magnesio",mass:"24.31",block:"s",period:3,group:2,family:"Metal alcalinotérreo",config:"[Ne] 3s²",col:2,row:3},
+  {z:13,sym:"Al",name:"Aluminio",mass:"26.98",block:"p",period:3,group:13,family:"Metal",config:"[Ne] 3s²3p¹",col:13,row:3},
+  {z:14,sym:"Si",name:"Silicio",mass:"28.09",block:"p",period:3,group:14,family:"Metaloide",config:"[Ne] 3s²3p²",col:14,row:3},
+  {z:15,sym:"P",name:"Fósforo",mass:"30.97",block:"p",period:3,group:15,family:"No metal",config:"[Ne] 3s²3p³",col:15,row:3},
+  {z:16,sym:"S",name:"Azufre",mass:"32.07",block:"p",period:3,group:16,family:"No metal",config:"[Ne] 3s²3p⁴",col:16,row:3},
+  {z:17,sym:"Cl",name:"Cloro",mass:"35.45",block:"p",period:3,group:17,family:"Halógeno",config:"[Ne] 3s²3p⁵",col:17,row:3},
+  {z:18,sym:"Ar",name:"Argón",mass:"39.95",block:"noble",period:3,group:18,family:"Gas noble",config:"[Ne] 3s²3p⁶",col:18,row:3},
+  {z:19,sym:"K",name:"Potasio",mass:"39.10",block:"s",period:4,group:1,family:"Metal alcalino",config:"[Ar] 4s¹",col:1,row:4},
+  {z:20,sym:"Ca",name:"Calcio",mass:"40.08",block:"s",period:4,group:2,family:"Metal alcalinotérreo",config:"[Ar] 4s²",col:2,row:4},
+  {z:21,sym:"Sc",name:"Escandio",mass:"44.96",block:"d",period:4,group:3,family:"Metal transición",config:"[Ar] 4s²3d¹",col:3,row:4},
+  {z:22,sym:"Ti",name:"Titanio",mass:"47.87",block:"d",period:4,group:4,family:"Metal transición",config:"[Ar] 4s²3d²",col:4,row:4},
+  {z:23,sym:"V",name:"Vanadio",mass:"50.94",block:"d",period:4,group:5,family:"Metal transición",config:"[Ar] 4s²3d³",col:5,row:4},
+  {z:24,sym:"Cr",name:"Cromo",mass:"52.00",block:"d",period:4,group:6,family:"Metal transición",config:"[Ar] 4s¹3d⁵",col:6,row:4},
+  {z:25,sym:"Mn",name:"Manganeso",mass:"54.94",block:"d",period:4,group:7,family:"Metal transición",config:"[Ar] 4s²3d⁵",col:7,row:4},
+  {z:26,sym:"Fe",name:"Hierro",mass:"55.85",block:"d",period:4,group:8,family:"Metal transición",config:"[Ar] 4s²3d⁶",col:8,row:4},
+  {z:27,sym:"Co",name:"Cobalto",mass:"58.93",block:"d",period:4,group:9,family:"Metal transición",config:"[Ar] 4s²3d⁷",col:9,row:4},
+  {z:28,sym:"Ni",name:"Níquel",mass:"58.69",block:"d",period:4,group:10,family:"Metal transición",config:"[Ar] 4s²3d⁸",col:10,row:4},
+  {z:29,sym:"Cu",name:"Cobre",mass:"63.55",block:"d",period:4,group:11,family:"Metal transición",config:"[Ar] 4s¹3d¹⁰",col:11,row:4},
+  {z:30,sym:"Zn",name:"Zinc",mass:"65.38",block:"d",period:4,group:12,family:"Metal transición",config:"[Ar] 4s²3d¹⁰",col:12,row:4},
+  {z:31,sym:"Ga",name:"Galio",mass:"69.72",block:"p",period:4,group:13,family:"Metal",config:"[Ar] 4s²3d¹⁰4p¹",col:13,row:4},
+  {z:32,sym:"Ge",name:"Germanio",mass:"72.63",block:"p",period:4,group:14,family:"Metaloide",config:"[Ar] 4s²3d¹⁰4p²",col:14,row:4},
+  {z:33,sym:"As",name:"Arsénico",mass:"74.92",block:"p",period:4,group:15,family:"Metaloide",config:"[Ar] 4s²3d¹⁰4p³",col:15,row:4},
+  {z:34,sym:"Se",name:"Selenio",mass:"78.97",block:"p",period:4,group:16,family:"No metal",config:"[Ar] 4s²3d¹⁰4p⁴",col:16,row:4},
+  {z:35,sym:"Br",name:"Bromo",mass:"79.90",block:"p",period:4,group:17,family:"Halógeno",config:"[Ar] 4s²3d¹⁰4p⁵",col:17,row:4},
+  {z:36,sym:"Kr",name:"Kriptón",mass:"83.80",block:"noble",period:4,group:18,family:"Gas noble",config:"[Ar] 4s²3d¹⁰4p⁶",col:18,row:4},
+];
+
+function buildPeriodicTable() {
+  const grid = document.getElementById('pt-grid');
+  // Build 6-row × 18-col grid
+  const cells = {};
+  elements.forEach(el => { cells[`${el.row}-${el.col}`] = el; });
+
+  for (let row = 1; row <= 5; row++) {
+    for (let col = 1; col <= 18; col++) {
+      const el = cells[`${row}-${col}`];
+      const div = document.createElement('div');
+      if (el) {
+        div.className = `pt-cell pt-${el.block}`;
+        div.innerHTML = `<span class="pt-num">${el.z}</span><span class="pt-symbol">${el.sym}</span>`;
+        div.addEventListener('mousemove', (e) => showPopup(el, e));
+        div.addEventListener('mouseleave', hidePopup);
+      } else {
+        div.className = 'pt-cell pt-empty';
+      }
+      grid.appendChild(div);
+    }
+  }
+}
+
+function showPopup(el, e) {
+  const popup = document.getElementById('element-popup');
+  document.getElementById('pop-symbol').textContent = el.sym;
+  document.getElementById('pop-name').textContent = el.name;
+  document.getElementById('pop-z').textContent = el.z;
+  document.getElementById('pop-mass').textContent = el.mass;
+  document.getElementById('pop-config').textContent = el.config;
+  document.getElementById('pop-period').textContent = el.period;
+  document.getElementById('pop-group').textContent = el.group;
+  document.getElementById('pop-block').textContent = el.block === 'noble' ? 'p' : el.block;
+  document.getElementById('pop-family').textContent = el.family;
+  popup.classList.add('show');
+  const x = e.clientX + 16, y = e.clientY - 80;
+  popup.style.left = Math.min(x, window.innerWidth - 250) + 'px';
+  popup.style.top = Math.max(y, 8) + 'px';
+}
+
+function hidePopup() {
+  document.getElementById('element-popup').classList.remove('show');
+}
+
+// ==================== INIT ====================
+buildQuiz();
+buildFill();
+buildPeriodicTable();
+updateFlashcard();
+</script>
+</body>
+</html>
